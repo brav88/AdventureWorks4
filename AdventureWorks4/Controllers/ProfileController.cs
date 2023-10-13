@@ -1,4 +1,5 @@
 ﻿using AdventureWorks4.FirebaseAuth;
+using AdventureWorks4.Models;
 using Firebase.Storage;
 using Google.Cloud.Firestore;
 using Microsoft.AspNetCore.Http;
@@ -12,9 +13,12 @@ namespace AdventureWorks4.Controllers
 	{
 		public IActionResult Index()
 		{
+			if (string.IsNullOrEmpty(HttpContext.Session.GetString("userSession")))
+				return RedirectToAction("Index", "Error");
+
 			//Leemos de la sesion los datos del usuario y se lo pasamos a la vista
 			ViewBag.User = JsonConvert.DeserializeObject<Models.User>(HttpContext.Session.GetString("userSession"));
-			
+
 			return View();
 		}
 
@@ -53,7 +57,7 @@ namespace AdventureWorks4.Controllers
 			DocumentReference docRef = db.Collection("Users").Document(user?.DocumentId);
 			Dictionary<string, object> dataToUpdate = new Dictionary<string, object>
 			{
-				{ "PhotoPath", downloadUrl },				
+				{ "PhotoPath", downloadUrl },
 			};
 			WriteResult result = await docRef.UpdateAsync(dataToUpdate);
 
@@ -62,6 +66,6 @@ namespace AdventureWorks4.Controllers
 			ViewBag.User = user;
 
 			return View("Index");
-		}		
+		}
 	}
 }

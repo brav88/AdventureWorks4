@@ -2,10 +2,69 @@
 	ViewData["Title"] = "Error";
 }
 
-
-
-<div class="error-container">
+@* <div class="error-container">
 	<h2>@ViewBag.Error.Title</h2>
-	<p class="errormessage">@ViewBag.Error.ErrorMessage</p>	
+	<p class="errormessage">@ViewBag.Error.ErrorMessage</p>
 	<a href="@ViewBag.Error.Path" class="action-button">@ViewBag.Error.ActionMessage</a>
+</div> *@
+
+<style>
+	/*     body {
+			font-family: Arial, sans-serif;
+			background-color: #f4f4f4;
+		} */
+
+	/*     .error-container {
+			width: 300px;
+			margin: 0 auto;
+			background-color: #fff;
+			border: 1px solid #ccc;
+			box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+			text-align: center;
+			padding: 20px;
+			border-radius: 5px;
+			margin-top: 100px;
+		} */
+
+	.error-message {
+		font-size: 18px;
+		margin-bottom: 20px;
+	}
+
+	.ok-button {
+		background-color: #007bff;
+		color: #fff;
+		border: none;
+		padding: 10px 20px;
+		cursor: pointer;
+		border-radius: 5px;
+		font-size: 16px;
+	}
+
+	/* .ok-button:hover {
+				background-color: #0056b3;
+			} */
+</style>
+
+<div class="alert alert-danger" role="alert">
+	<div class="error-message">
+		@ViewBag.Error.Title
+	</div>
+
+	<div class="error-message">
+		<p>@ViewBag.Error.ErrorMessage</p>
+	</div>
+	<hr />
+	<a href="@ViewBag.Error.Path" class="ok-button">@ViewBag.Error.ActionMessage</a>
 </div>
+
+@* <div class="error-container">
+    <div class="error-message">
+        <p>@ViewBag.Error.Title</p>
+    </div>
+    <div class="error-message">
+        <p>@ViewBag.Error.ErrorMessage</p>
+    </div>
+	<hr />
+    <a href="@ViewBag.Error.Path" class="ok-button">@ViewBag.Error.ActionMessage</a>
+</div> *@

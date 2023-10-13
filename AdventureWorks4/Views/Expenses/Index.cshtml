@@ -2,6 +2,17 @@
 	ViewData["Title"] = "Home Page";
 }
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script>
+	$(document).ready(function () {
+		$("#myInput").on("keyup", function () {
+			var value = $(this).val().toLowerCase();
+			$("#myTable tr").filter(function () {
+				$(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+			});
+		});
+	});
+</script>
 <div class="text-center">
 	<div class="container mt-5">
 		<div class="row justify-content-center">
@@ -36,6 +47,33 @@
 								</form>
 							</div>
 						</div>
+					</div>
+				</div>
+
+				<div class="card">
+					<div class="card-header">
+						<input class="form-control" id="myInput" type="text" placeholder="Search..">
+					</div>					
+					<div class="card-body">
+						<table class="table">
+							<thead>
+								<tr>
+									<th scope="col">Name</th>
+									<th scope="col">Amount</th>
+									<th scope="col">Date</th>
+								</tr>
+							</thead>
+							<tbody id="myTable">
+								@foreach (var @item in @ViewBag.Expenses)
+								{
+									<tr>
+										<td>@item.Name</td>
+										<td>$@item.Amount</td>
+										<td>@item.Date</td>
+									</tr>
+								}
+							</tbody>
+						</table>
 					</div>
 				</div>
 			</div>

@@ -5,14 +5,43 @@ using Microsoft.AspNetCore.Mvc;
 using static Google.Cloud.Firestore.V1.StructuredAggregationQuery.Types.Aggregation.Types;
 using System.Xml.Linq;
 using AdventureWorks4.FirebaseAuth;
+using AdventureWorks4.Models;
+using Firebase.Storage;
+using System.Collections.Generic;
 
 namespace AdventureWorks4.Controllers
 {
 	public class ExpensesController : Controller
 	{
-		public IActionResult Index()
+		public async Task<IActionResult> Index()
 		{
-			return View();
+			if (string.IsNullOrEmpty(HttpContext.Session.GetString("userSession")))
+				return RedirectToAction("Index", "Error");
+
+			return await GetExpenses();			
+		}
+
+		private async Task<IActionResult> GetExpenses()
+		{
+			List<Expense> expensesList = new List<Expense>();
+			Query query = FirestoreDb.Create(FirebaseAuthHelper.firebaseAppId).Collection("Expenses");
+			QuerySnapshot querySnapshot = await query.GetSnapshotAsync();
+
+			foreach (var item in querySnapshot)
+			{
+				Dictionary<string, object> data = item.ToDictionary();
+
+				expensesList.Add(new Expense
+				{					
+					Name = data["name"].ToString(),
+					Amount = data["amount"].ToString(),
+					Date = data["date"].ToString()
+				});
+			}
+
+			ViewBag.Expenses = expensesList;
+
+			return View("Index");
 		}
 
 		[HttpPost]
@@ -30,11 +59,19 @@ namespace AdventureWorks4.Controllers
 								{ "name", name },
 							});
 
-				return View("Index");
+				return await GetExpenses();
 			}
-			catch
+			catch (FirebaseStorageException ex)
 			{
-				return View();
+				ViewBag.Error = new ErrorHandler()
+				{
+					Title = ex.Message,
+					ErrorMessage = ex.InnerException?.Message,
+					ActionMessage = "Go to Expenses",
+					Path = "/Expenses"
+				};
+
+				return View("ErrorHandler");
 			}
 		}
 	}

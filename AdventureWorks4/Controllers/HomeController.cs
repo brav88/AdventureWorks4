@@ -1,9 +1,11 @@
 ﻿using AdventureWorks4.Models;
 using Firebase.Auth;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using System.Data;
 using System.Diagnostics;
+using System.Reflection.Metadata;
 
 namespace AdventureWorks4.Controllers
 {
@@ -17,7 +19,10 @@ namespace AdventureWorks4.Controllers
 		}
 
 		public IActionResult Index()
-		{			
+		{
+			if (string.IsNullOrEmpty(HttpContext.Session.GetString("userSession")))
+				return RedirectToAction("Index", "Error");
+
 			//Aqui le pasamos la lista de Resorts a la vista
 			ViewBag.ResortList = GetResorts();
 
