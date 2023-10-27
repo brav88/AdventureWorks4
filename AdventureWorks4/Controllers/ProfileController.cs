@@ -63,6 +63,10 @@ namespace AdventureWorks4.Controllers
 
 			//Pasamos la URl de la foto a la vista
 			user.PhotoPath = downloadUrl;
+
+			//Actualizar la foto en SQL Server
+			UserHandler.SaveFirebaseUser(user);
+
 			ViewBag.User = user;
 
 			return View("Index");

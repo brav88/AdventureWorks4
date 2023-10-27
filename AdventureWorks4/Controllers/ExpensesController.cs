@@ -13,53 +13,34 @@ namespace AdventureWorks4.Controllers
 {
 	public class ExpensesController : Controller
 	{
-		public async Task<IActionResult> Index()
+		public IActionResult Index()
 		{
 			if (string.IsNullOrEmpty(HttpContext.Session.GetString("userSession")))
 				return RedirectToAction("Index", "Error");
 
-			return await GetExpenses();			
+			return GetExpenses();			
 		}
 
-		private async Task<IActionResult> GetExpenses()
+		private IActionResult GetExpenses()
 		{
-			List<Expense> expensesList = new List<Expense>();
-			Query query = FirestoreDb.Create(FirebaseAuthHelper.firebaseAppId).Collection("Expenses");
-			QuerySnapshot querySnapshot = await query.GetSnapshotAsync();
+			ExpensesHandler expensesHandler = new ExpensesHandler();
 
-			foreach (var item in querySnapshot)
-			{
-				Dictionary<string, object> data = item.ToDictionary();
-
-				expensesList.Add(new Expense
-				{					
-					Name = data["name"].ToString(),
-					Amount = data["amount"].ToString(),
-					Date = data["date"].ToString()
-				});
-			}
-
-			ViewBag.Expenses = expensesList;
+			ViewBag.Expenses = expensesHandler.GetExpensesCollection().Result;
 
 			return View("Index");
 		}
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Create(string name, int amount, string date)
+		public IActionResult Create(string name, int amount, string date)
 		{
 			try
 			{
-				DocumentReference addedDocRef = 
-					await FirestoreDb.Create(FirebaseAuthHelper.firebaseAppId)
-						.Collection("Expenses").AddAsync(new Dictionary<string, object>
-							{
-								{ "amount",amount },
-								{ "date", date },
-								{ "name", name },
-							});
+				ExpensesHandler expensesHandler = new ExpensesHandler();
 
-				return await GetExpenses();
+				bool result = expensesHandler.Create(name, amount, date).Result;
+
+				return GetExpenses();	
 			}
 			catch (FirebaseStorageException ex)
 			{
@@ -73,6 +54,47 @@ namespace AdventureWorks4.Controllers
 
 				return View("ErrorHandler");
 			}
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public IActionResult EditExpense(string id, string name, int amount, string date)
+		{
+			try
+			{
+				ExpensesHandler expensesHandler = new ExpensesHandler();
+
+				bool result = expensesHandler.Edit(id, name, amount, date).Result;
+
+				return GetExpenses();
+			}
+			catch (FirebaseStorageException ex)
+			{
+				ViewBag.Error = new ErrorHandler()
+				{
+					Title = ex.Message,
+					ErrorMessage = ex.InnerException?.Message,
+					ActionMessage = "Go to Expenses",
+					Path = "/Expenses"
+				};
+
+				return View("ErrorHandler");
+			}
+		}
+
+		public IActionResult Edit(string id, string name, string amount, string date)
+		{
+			Expense edited = new Expense
+			{
+				Id = id,
+				Name = name,
+				Amount = amount,
+				Date = date,
+			};
+
+			ViewBag.Edited = edited;
+
+			return View();
 		}
 	}
 }

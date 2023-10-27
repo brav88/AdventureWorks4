@@ -1,0 +1,48 @@
+﻿@{
+	ViewData["Title"] = "Home Page";
+}
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<div class="text-center">
+	<div class="container mt-5">
+		<div class="row justify-content-center">
+			<div class="col-md-6">
+				<div class="card">
+					<div class="card-header">
+						<ul class="nav nav-tabs card-header-tabs">
+							<li class="nav-item">
+								<a class="nav-link active" id="login-tab" data-bs-toggle="tab" href="#expense-form">Expense</a>
+							</li>
+						</ul>
+					</div>
+					<div class="card-body">
+						<div class="tab-content">							
+							<div class="tab-pane fade show active" id="expense-form">
+								<h2>Edit Expense</h2>
+								<form asp-controller="Expenses" asp-action="EditExpense">
+									<div class="form-floating mb-3">
+										<input type="text" class="form-control" id="id" name="id" value="@ViewBag.Edited.Id" required readonly>
+										<label for="name">Id:</label>
+									</div>
+									<div class="form-floating mb-3">
+										<input type="text" class="form-control" id="name" name="name" value="@ViewBag.Edited.Name" required>
+										<label for="name">Name:</label>
+									</div>
+									<div class="form-floating mb-3">
+										<input type="number" class="form-control" id="amount" name="amount" value="@ViewBag.Edited.Amount" required>
+										<label for="amount">Amount:</label>
+									</div>
+									<div class="form-floating mb-3">
+										<input type="date" class="form-control" id="date" name="date" value="@ViewBag.Edited.Date" required>
+										<label for="date">Date:</label>
+									</div>
+									<button type="submit" class="btn btn-primary">Edit Expense</button>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>				
+			</div>
+		</div>
+	</div>
+</div>

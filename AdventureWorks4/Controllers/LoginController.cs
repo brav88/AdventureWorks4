@@ -89,6 +89,16 @@ namespace AdventureWorks4.Controllers
 				};
 				WriteResult result = await docRef.UpdateAsync(dataToUpdate);
 
+				//Guardar en SQLServer
+				UserHandler.SaveFirebaseUser(new Models.User
+				{
+					DocumentId = addedDocRef.Id,
+					Id = taskUser.User.Uid,
+					Name = taskUser.User.Info.DisplayName,
+					Email = taskUser.User.Info.Email,
+					PhotoPath = string.Empty
+				});
+
 				return View("Index");
 			}
 			catch (FirebaseAuthHttpException ex)
