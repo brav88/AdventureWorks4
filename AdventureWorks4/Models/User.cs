@@ -8,7 +8,8 @@ namespace AdventureWorks4.Models
 		public string? Id { get; set; }
         public string? Name { get; set; }
         public string? Email { get; set; }
-        public string? PhotoPath { get; set; }		
+        public string? PhotoPath { get; set; }
+		public int? Role { get; set; }
 	}    
 
     public static class UserHandler

@@ -8,6 +8,7 @@ using AdventureWorks4.FirebaseAuth;
 using AdventureWorks4.Models;
 using Firebase.Storage;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace AdventureWorks4.Controllers
 {
@@ -17,6 +18,13 @@ namespace AdventureWorks4.Controllers
 		{
 			if (string.IsNullOrEmpty(HttpContext.Session.GetString("userSession")))
 				return RedirectToAction("Index", "Error");
+
+			Models.User? user = JsonConvert.DeserializeObject<Models.User>(HttpContext.Session.GetString("userSession"));
+
+			if(user.Role == 0)
+				return RedirectToAction("Index", "Error");
+
+			ViewBag.Role = user.Role;
 
 			return GetExpenses();			
 		}

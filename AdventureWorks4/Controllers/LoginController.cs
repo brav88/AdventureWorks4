@@ -16,7 +16,7 @@ namespace AdventureWorks4.Controllers
 	{
 		// GET: LoginController
 		public IActionResult Index()
-		{
+		{			
 			return View();
 		}
 
@@ -46,13 +46,21 @@ namespace AdventureWorks4.Controllers
 					Id = taskUser.User.Uid,
 					Name = taskUser.User.Info.DisplayName,
 					Email = taskUser.User.Info.Email,
-					PhotoPath = data["PhotoPath"].ToString()
+					PhotoPath = data["PhotoPath"].ToString(),
+					Role = Convert.ToInt16(data["Role"])
 				};
 
 				//Aqui guardamos los datos del usuario en la session en formato json
 				HttpContext.Session.SetString("userSession", JsonConvert.SerializeObject(user));
 
-				return RedirectToAction("Index", "Home");
+				if(user.Role == 1)
+				{
+					return RedirectToAction("Index", "Home");
+				}
+				else
+				{
+					return RedirectToAction("Index", "Expenses");
+				}				
 			}
 			catch (FirebaseAuthHttpException ex)
 			{
@@ -98,6 +106,15 @@ namespace AdventureWorks4.Controllers
 					Email = taskUser.User.Info.Email,
 					PhotoPath = string.Empty
 				});
+
+				//Send email
+				SmtpParams smtp = new SmtpParams
+				{
+					ReceiverEmail = taskUser.User.Info.Email,
+					ClientName = taskUser.User.Info.DisplayName
+				};
+
+				Email.EmailSender.SendEmail(smtp);
 
 				return View("Index");
 			}
