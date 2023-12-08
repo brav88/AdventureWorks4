@@ -1,5 +1,6 @@
 ﻿using AdventureWorks4.FirebaseAuth;
 using AdventureWorks4.Models;
+using Firebase.Auth;
 using Firebase.Storage;
 using Google.Cloud.Firestore;
 using Microsoft.AspNetCore.Http;
@@ -17,7 +18,14 @@ namespace AdventureWorks4.Controllers
 				return RedirectToAction("Index", "Error");
 
 			//Leemos de la sesion los datos del usuario y se lo pasamos a la vista
-			ViewBag.User = JsonConvert.DeserializeObject<Models.User>(HttpContext.Session.GetString("userSession"));
+			Models.User user = JsonConvert.DeserializeObject<Models.User>(HttpContext.Session.GetString("userSession"));
+						
+			PermissionHandler permissionHandler = new PermissionHandler();
+
+			if (!permissionHandler.ValidatePageByRole(user.Role.ToString(), "Profile").Result)
+				return RedirectToAction("Index", "Error", new { id = 99 });
+
+			ViewBag.User = user;
 
 			return View();
 		}

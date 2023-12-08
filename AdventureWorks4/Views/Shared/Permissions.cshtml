@@ -1,18 +1,16 @@
-﻿﻿@{
-	ViewData["Title"] = "Error";
-}
+﻿<script>
 
-<script>
+	var xhttp2 = new XMLHttpRequest();
+	xhttp2.open("GET", "/Login/GetPermissions", true);
+	xhttp2.send();
 
-	var xhttp = new XMLHttpRequest();
-	xhttp.open("GET", "Login/GetPermissions", true);
-	xhttp.send();
-
-	xhttp.onreadystatechange = function () {
+	xhttp2.onreadystatechange = function () {
 		if (this.readyState == 4 && this.status == 200) {
-			var api = JSON.parse(xhttp.responseText);
+			var permissions = JSON.parse(xhttp2.responseText);
 
-
+			permissions.pages.forEach((item) => {
+				document.getElementById(item).removeAttribute("hidden");
+			});
 		}
 	};
 

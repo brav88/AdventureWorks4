@@ -19,12 +19,15 @@ namespace AdventureWorks4.Controllers
 			if (string.IsNullOrEmpty(HttpContext.Session.GetString("userSession")))
 				return RedirectToAction("Index", "Error");
 
-			Models.User? user = JsonConvert.DeserializeObject<Models.User>(HttpContext.Session.GetString("userSession"));
+			//Leemos de la sesion los datos del usuario y se lo pasamos a la vista
+			Models.User user = JsonConvert.DeserializeObject<Models.User>(HttpContext.Session.GetString("userSession"));
 
-			if(user.Role == 0)
-				return RedirectToAction("Index", "Error");
+			PermissionHandler permissionHandler = new PermissionHandler();
 
-			ViewBag.Role = user.Role;
+			if (!permissionHandler.ValidatePageByRole(user.Role.ToString(), "Expenses").Result)
+				return RedirectToAction("Index", "Error", new { id = 99 });
+
+			ViewBag.User = user;
 
 			return GetExpenses();			
 		}

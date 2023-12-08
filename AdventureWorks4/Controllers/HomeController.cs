@@ -23,6 +23,15 @@ namespace AdventureWorks4.Controllers
 			if (string.IsNullOrEmpty(HttpContext.Session.GetString("userSession")))
 				return RedirectToAction("Index", "Error");
 
+			Models.User user = JsonConvert.DeserializeObject<Models.User>(HttpContext.Session.GetString("userSession"));
+
+			PermissionHandler permissionHandler = new PermissionHandler();
+
+			if (!permissionHandler.ValidatePageByRole(user.Role.ToString(), "Home").Result)
+				return RedirectToAction("Index", "Error", new { id = 99 });
+
+			ViewBag.User = user;
+
 			//Aqui le pasamos la lista de Resorts a la vista
 			//ViewBag.ResortList = GetResorts();
 

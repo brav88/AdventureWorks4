@@ -32,31 +32,50 @@ namespace AdventureWorks4.Models
 
 	public class Permissions
 	{
-		public List<Object>? Pages { get; set; }
+		public List<string>? Pages { get; set; }
 	}
 
 	public class PermissionHandler
 	{
-		public async Task<Permissions> GetPermissionsCollection()
-		{			
-			Query query = FirestoreDb.Create(FirebaseAuthHelper.firebaseAppId).Collection("Permissions");
-			QuerySnapshot querySnapshot = await query.GetSnapshotAsync();
+		public async Task<Permissions> GetPermissionsCollection(string role)
+		{
 			Permissions permissions = new Permissions();
-			permissions.Pages = new List<object>();
+			permissions.Pages = new List<string>();
+			dynamic pages = await GetDynamicPermissions(role);
 
-			foreach (var item in querySnapshot)
+			foreach (var page in pages)
 			{
-				Dictionary<string, object> data = item.ToDictionary();
-
-				dynamic data2 = data["Pages"];
-				
-				foreach (var item2 in data2)
-				{
-					permissions.Pages.Add(item2);
-				}
+				permissions.Pages.Add(page);
 			}
 
 			return permissions;
+		}
+
+		public async Task<dynamic> GetDynamicPermissions(string role)
+		{
+			Query query = FirestoreDb.Create(FirebaseAuthHelper.firebaseAppId).Collection("Permissions");
+			QuerySnapshot querySnapshot = await query.GetSnapshotAsync();
+
+			Dictionary<string, object> data = querySnapshot[0].ToDictionary();
+
+			dynamic pages = data[role];
+
+			return pages;
+		}
+
+		public async Task<bool> ValidatePageByRole(string role, string requestedPage)
+		{
+			Permissions permissions = await GetPermissionsCollection(role);
+
+			foreach (var page in permissions.Pages)
+			{
+				if (page == requestedPage)
+				{
+					return true;
+				}
+			}
+
+			return false;
 		}
 	}
 }

@@ -53,14 +53,7 @@ namespace AdventureWorks4.Controllers
 				//Aqui guardamos los datos del usuario en la session en formato json
 				HttpContext.Session.SetString("userSession", JsonConvert.SerializeObject(user));
 
-				if(user.Role == 1)
-				{
-					return RedirectToAction("Index", "Home");
-				}
-				else
-				{
-					return RedirectToAction("Index", "Expenses");
-				}				
+				return RedirectToAction("Index", "Home");
 			}
 			catch (FirebaseAuthHttpException ex)
 			{
@@ -152,11 +145,13 @@ namespace AdventureWorks4.Controllers
 			return View("ErrorHandler");
 		}
 
-		public IActionResult GetPermissions(int id)
+		public IActionResult GetPermissions()
 		{
+			Models.User? user = JsonConvert.DeserializeObject<Models.User>(HttpContext.Session.GetString("userSession"));
+
 			PermissionHandler permissionHandler = new PermissionHandler();
 
-			Permissions permitList = permissionHandler.GetPermissionsCollection().Result;
+			Permissions permitList = permissionHandler.GetPermissionsCollection(user.Role.ToString()).Result;
 
 			return Json(permitList);
 		}

@@ -7,15 +7,32 @@ namespace AdventureWorks4.Controllers
 	public class ErrorController : Controller
 	{
 		// GET: ErrorController
-		public ActionResult Index()
+		public ActionResult Index(int id)
 		{
-			ViewBag.Error = new ErrorHandler()
+			ErrorHandler? err = null;
+
+			if (id == 99)
 			{
-				Title = "You must login to access this resource",
-				ErrorMessage = "Session is inactive",
-				ActionMessage = "Go to login",
-				Path = "/Login"
-			};
+				err = new ErrorHandler()
+				{
+					Title = "You do NOT have access to this resource",
+					ErrorMessage = "Please log in again",
+					ActionMessage = "Go to login",
+					Path = "/Login"
+				};
+			}
+			else
+			{
+				err = new ErrorHandler()
+				{
+					Title = "You must login to access this resource",
+					ErrorMessage = "Session is inactive",
+					ActionMessage = "Go to login",
+					Path = "/Login"
+				};
+			}
+			
+			ViewBag.Error = err;
 
 			return View("ErrorHandler");			
 		}
