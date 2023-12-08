@@ -1,0 +1,30 @@
+﻿@{
+	ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+	<script type="text/javascript">
+
+		var options = {
+			width: 300,
+			height: 200
+		};
+
+		var xhttp = new XMLHttpRequest();
+		xhttp.open("GET", "/Report/GetSalesReport", true);
+		xhttp.send();
+
+		xhttp.onreadystatechange = function () {
+			if (this.readyState == 4 && this.status == 200) {
+				var data = xhttp.responseText;
+				new Chartist.Line('#chart1', JSON.parse(data), options);				
+			}
+		};
+
+		
+	</script>
+
+	<div class="row">
+		<div class="ct-chart ct-golden-section" id="chart1"></div>
+	</div>
+</div>

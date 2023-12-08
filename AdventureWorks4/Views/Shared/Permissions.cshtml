@@ -1,0 +1,19 @@
+﻿﻿@{
+	ViewData["Title"] = "Error";
+}
+
+<script>
+
+	var xhttp = new XMLHttpRequest();
+	xhttp.open("GET", "Login/GetPermissions", true);
+	xhttp.send();
+
+	xhttp.onreadystatechange = function () {
+		if (this.readyState == 4 && this.status == 200) {
+			var api = JSON.parse(xhttp.responseText);
+
+
+		}
+	};
+
+</script>

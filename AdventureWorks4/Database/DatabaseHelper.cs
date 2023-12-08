@@ -6,7 +6,7 @@ namespace AdventureWorks4.Database
 	public class DatabaseHelper
 	{
 		const string server = "localhost";
-		const string database = "Booking";
+		const string database = "AdventureWorks2019";
 		private static string connectionString = string.Format("Data Source={0};Initial Catalog={1};Integrated Security=True", server, database);
 
 		//select

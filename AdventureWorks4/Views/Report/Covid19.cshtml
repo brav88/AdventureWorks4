@@ -1,0 +1,57 @@
+﻿@{
+	ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+	<script type="text/javascript">
+
+		var options = {
+			width: 300,
+			height: 200
+		};
+
+		var xhttp = new XMLHttpRequest();
+		xhttp.open("GET", "https://api.covidtracking.com/v1/us/20200531.json", true);
+		xhttp.send();
+
+		xhttp.onreadystatechange = function () {
+			if (this.readyState == 4 && this.status == 200) {
+				var api = JSON.parse(xhttp.responseText);
+
+				var data = {
+					labels: ['Positive', 'Negative', 'Pending'],
+					series: [api.positive, api.negative, api.pending]
+				};
+
+				new Chartist.Pie('#chart1', data);
+
+				var data2 = {
+					labels: ['Hospitalized Currently: ' + api.hospitalizedCurrently, 
+							 'Hospitalized Cumulative: ' + api.hospitalizedCumulative,
+							 'Hospitalized Increase: ' + api.hospitalizedIncrease],
+					series: [api.hospitalizedCurrently, api.hospitalizedCumulative, api.hospitalizedIncrease]
+				};
+				
+				new Chartist.Pie('#chart2', data2);
+
+
+				new Chartist.Line('#chart3', {
+					labels: [0, api.deathIncrease],
+					series: [
+						[0, api.death]
+					]
+				}, {
+					low: 0,
+					showArea: true
+				});
+			}
+		};
+
+	</script>
+
+	<div class="row">
+		<div class="ct-chart ct-golden-section" id="chart1"></div>
+		<div class="ct-chart ct-golden-section" id="chart2"></div>
+		<div class="ct-chart ct-golden-section" id="chart3"></div>
+	</div>
+</div>

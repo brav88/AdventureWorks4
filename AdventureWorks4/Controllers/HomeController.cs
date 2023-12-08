@@ -24,7 +24,7 @@ namespace AdventureWorks4.Controllers
 				return RedirectToAction("Index", "Error");
 
 			//Aqui le pasamos la lista de Resorts a la vista
-			ViewBag.ResortList = GetResorts();
+			//ViewBag.ResortList = GetResorts();
 
 			return View();
 		}

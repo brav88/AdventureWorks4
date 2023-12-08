@@ -151,5 +151,14 @@ namespace AdventureWorks4.Controllers
 
 			return View("ErrorHandler");
 		}
+
+		public IActionResult GetPermissions(int id)
+		{
+			PermissionHandler permissionHandler = new PermissionHandler();
+
+			Permissions permitList = permissionHandler.GetPermissionsCollection().Result;
+
+			return Json(permitList);
+		}
 	}
 }
